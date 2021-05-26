@@ -1,8 +1,12 @@
 
 
+import datetime
 from twisted import logger
 
 from tendril.asynchronous.utils.logger import TwistedLoggerMixin
+from tendril.asynchronous.contextmanagers.influxdb import InfluxDBAsyncBurstWriter
+from tendril.config import METRICS_INFLUXDB_BUCKET
+from tendril.config import METRICS_INFLUXDB_TOKEN
 
 
 class MetricsLoggerMixin(TwistedLoggerMixin):
@@ -29,6 +33,16 @@ class MetricsLoggerMixin(TwistedLoggerMixin):
     def _metrics_log_observer(self, event):
         if event['log_namespace'].split('.')[0] == "metrics":
             metrics = [x for x in event.keys() if not x.startswith('log_')]
-            publishable = {"{0}.{1}".format(event['log_namespace'], x): event[x]
-                           for x in metrics}
-            print(publishable)
+            publishable = {"{0}.{1}".format(event['log_namespace'], x):
+                               event[x] for x in metrics}
+            ts = datetime.datetime.utcfromtimestamp(event['log_time'])
+            with InfluxDBAsyncBurstWriter(bucket=METRICS_INFLUXDB_BUCKET,
+                                          token=METRICS_INFLUXDB_TOKEN) as writer:
+                for metric, value in publishable.items():
+                    _parts = metric.split('.')
+                    measurement = _parts[2]
+                    namespace = _parts[1]
+                    writer.write(measurement=measurement,
+                                 tags={"namespace": namespace},
+                                 fields={"value": value},
+                                 ts=ts)

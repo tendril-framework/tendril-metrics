@@ -33,6 +33,11 @@ config_elements_metrics = [
         "'metrics'",
         "InfluxDB Bucket to use to store metrics"
     ),
+    ConfigOption(
+        'METRICS_INFLUXDB_TOKEN',
+        "None",
+        "InfluxDB Token to use to store metrics"
+    ),
 ]
 
 
