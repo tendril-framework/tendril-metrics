@@ -38,6 +38,13 @@ config_elements_metrics = [
         "None",
         "InfluxDB Token to use to store metrics"
     ),
+    ConfigOption(
+        'METRICS_PUBLISH',
+        "False",
+        "Whether to publish metrics. Note that this requires a "
+        "functioning influxdb instance and may have non-trivial "
+        "performance implications."
+    ),
 ]
 
 

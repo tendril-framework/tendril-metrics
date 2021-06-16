@@ -7,6 +7,7 @@ from tendril.asynchronous.utils.logger import TwistedLoggerMixin
 from tendril.asynchronous.contextmanagers.influxdb import InfluxDBAsyncBurstWriter
 from tendril.config import METRICS_INFLUXDB_BUCKET
 from tendril.config import METRICS_INFLUXDB_TOKEN
+from tendril.config import METRICS_PUBLISH
 
 
 class MetricsLoggerMixin(TwistedLoggerMixin):
@@ -31,7 +32,7 @@ class MetricsLoggerMixin(TwistedLoggerMixin):
         return self._metrics_loggers[namespace]
 
     def _metrics_log_observer(self, event):
-        if event['log_namespace'].split('.')[0] == "metrics":
+        if METRICS_PUBLISH and event['log_namespace'].split('.')[0] == "metrics":
             metrics = [x for x in event.keys() if not x.startswith('log_')]
             publishable = {"{0}.{1}".format(event['log_namespace'], x):
                                event[x] for x in metrics}
