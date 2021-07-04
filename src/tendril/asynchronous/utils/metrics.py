@@ -17,7 +17,7 @@ class MetricsLoggerMixin(TwistedLoggerMixin):
 
     def observers(self):
         rv = TwistedLoggerMixin.observers(self)
-        rv.append(self._metrics_log_observer)
+        rv.append('metrics', self._metrics_log_observer)
         return rv
 
     @property

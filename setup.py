@@ -29,7 +29,7 @@ def read(fname):
 
 
 core_dependencies = [
-    'tendril-async-utils-core',
+    'tendril-async-utils-core>=0.2.4',
     'tendril-connector-influxdb'
 ]
 
